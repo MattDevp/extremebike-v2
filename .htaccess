@@ -1,0 +1,34 @@
+# ExtremeBike — configuración para hosting Apache (Hostinger)
+
+# Forzar HTTPS y dominio sin www
+RewriteEngine On
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://extremebike.cl%{REQUEST_URI} [L,R=301]
+
+# Redirigir las páginas del sitio anterior a su sección nueva (conserva el SEO)
+RewriteRule ^services/?$ /#servicios [R=301,NE,L]
+RewriteRule ^products/?$ /#productos [R=301,NE,L]
+RewriteRule ^about/?$ /#nosotros [R=301,NE,L]
+
+# HTML siempre fresco; CSS/JS se renuevan con ?v=FECHA en el HTML
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+  <FilesMatch "\.(webp|svg|png|jpg|ico|woff2)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml application/xml text/plain
+</IfModule>
+
+AddType image/webp .webp
+AddType image/svg+xml .svg
